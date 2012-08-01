@@ -1,4 +1,4 @@
-# Class: artifactory
+# Class: puppet_artifactory
 #
 # This module downloads Maven Artifacts from Artifactory
 #
@@ -17,20 +17,24 @@
 #   password => password
 # }
 #
-class artifactory( $url = "", $username = "", $password = "") {
+class artifactory(
+  $url = '',
+  $username = '',
+  $password = '')
+{
 
   # Check arguments
   # url mandatory
-  if $url == "" {
-    fail("Cannot initialize the Artifactory class - the url parameter is mandatory")
+  if $url == '' {
+    fail('Cannot initialize the Artifactory class - the url parameter is mandatory')
   }
   $ARTIFACTORY_URL = $url
 
-  if ($username != "")  and ($password == "") {
-    fail("Cannot initialize the Artifactory class - both username and password must be set")
-  } elsif ($username == "")  and ($password != "") {
-    fail("Cannot initialize the Artifactory class - both username and password must be set")
-  } elsif ($username == "")  and ($password == "") {
+  if ($username != '')  and ($password == '') {
+    fail('Cannot initialize the Artifactory class - both username and password must be set')
+  } elsif ($username == '')  and ($password != '') {
+    fail('Cannot initialize the Artifactory class - both username and password must be set')
+  } elsif ($username == '')  and ($password == '') {
     $authentication = false
   } else {
     $authentication = true
@@ -39,15 +43,15 @@ class artifactory( $url = "", $username = "", $password = "") {
   }
 
   # Install script
-  file { "/opt/artifactory-script/download-artifact-from-artifactory.sh":
+  file { '/opt/artifactory-script/download-artifact-from-artifactory.sh':
     ensure   => file,
-    owner    => "root",
-    mode     => "0755",
-    source   => "puppet:///modules/artifactory/download-artifact-from-artifactory.sh",
-    require  => [File["/opt/artifactory-script"]]
+    owner    => 'root',
+    mode     => '0755',
+    source   => 'puppet:///modules/artifactory/download-artifact-from-artifactory.sh',
+    require  => File ['/opt/artifactory-script']
   }
 
-  file { "/opt/artifactory-script":
+  file { '/opt/artifactory-script':
     ensure => directory
   }	
 }
