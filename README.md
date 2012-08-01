@@ -42,7 +42,7 @@ Usage
 
 	artifactory::artifact {'/tmp/parser-0.3.0-SNAPSHOT.jar':
 	  gav         => 'com.company.project:parser:0.3.0-SNAPSHOT',
-          timestamped => true,
+	  timestamped => true,
 	}
 
 	artifactory::artifact {'chameleon web distribution':
