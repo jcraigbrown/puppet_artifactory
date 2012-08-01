@@ -1,4 +1,4 @@
-# Class: puppet_artifactory
+# Class: artifactory
 #
 # This module downloads Maven Artifacts from Artifactory
 #
@@ -12,9 +12,9 @@
 #
 # Sample Usage:
 #  class artifactory {
-#   url => http://edge.spree.de/artifactory,
-#   username => user,
-#   password => password
+#   url      => 'http://artifactory.domain.com:8081',
+#   username => 'user',
+#   password => 'password',
 # }
 #
 class artifactory(
@@ -30,11 +30,11 @@ class artifactory(
   }
   $ARTIFACTORY_URL = $url
 
-  if ($username != '')  and ($password == '') {
+  if ($username != '') and ($password == '') {
     fail('Cannot initialize the Artifactory class - both username and password must be set')
-  } elsif ($username == '')  and ($password != '') {
+  } elsif ($username == '') and ($password != '') {
     fail('Cannot initialize the Artifactory class - both username and password must be set')
-  } elsif ($username == '')  and ($password == '') {
+  } elsif ($username == '') and ($password == '') {
     $authentication = false
   } else {
     $authentication = true
