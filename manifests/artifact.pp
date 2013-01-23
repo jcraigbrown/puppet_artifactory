@@ -52,7 +52,7 @@ define artifactory::artifact(
   $output = $name,
   $timestamped = false)
 {
-	
+
   include artifactory
 
   Exec { path => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'], }
@@ -64,7 +64,7 @@ define artifactory::artifact(
   }
 
   if ($classifier) {
-    $includeClass = "-c ${classifier}"	
+    $includeClass = "-c ${classifier}"
   }
 
   if ($repository) {
@@ -72,11 +72,11 @@ define artifactory::artifact(
   }
 
   if ($timestamped) {
-    $timestamedRepo = "-t"
+    $timestampedRepo = "-t"
   }
 
-  $cmd = "/opt/artifactory-script/download-artifact-from-artifactory.sh -a ${gav} -e ${packaging} ${$includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestamedRepo} -o ${output} ${args} -v"
-	
+  $cmd = "/opt/artifactory-script/download-artifact-from-artifactory.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+
   if $ensure == present {
     exec { "Download ${gav}-${classifier}":
       command => $cmd,

@@ -38,7 +38,7 @@ function artifact_target_name()
 
     if [[ ${__classifier} != "" ]]
     then
-	__target="${__target}-${__classifier}"
+        __target="${__target}-${__classifier}"
     fi
     __target="${__target}.${__packaging}"
 
@@ -62,7 +62,7 @@ function artifact_source_name()
 
     if [[ ${__classifier} != "" ]]
     then
-	__source="${__source}-${__classifier}"
+        __source="${__source}-${__classifier}"
     fi
     __source="${__source}.${__packaging}"
 
@@ -83,10 +83,10 @@ function get_timestamp_and_build()
     curl -sS -f -L ${__request_url} -o ${__maven_metadata} ${CURL_VERBOSE} --location-trusted
     # Command to extract the timestamp
     __ts=`cat ${__maven_metadata} | tr -d [:space:] | grep -o "<timestamp>.*</timestamp>" \
-	| tr '<>' '  ' | awk '{ print $2 }'`
+        | tr '<>' '  ' | awk '{ print $2 }'`
     # Command to extract the build number
     __build=`cat ${__maven_metadata} | tr -d [:space:] | grep -o "<buildNumber>.*</buildNumber>" \
-	| tr '<>' '  ' | awk '{ print $2 }'`
+        | tr '<>' '  ' | awk '{ print $2 }'`
     # Remove the maven-metadata.xml file
     #rm ${__maven_metadata}
 
@@ -121,7 +121,7 @@ do
             GAV_COORD=( $OPTARG )
             GROUP_ID=`echo ${GAV_COORD[0]} | tr . /`
             ARTIFACT_ID=${GAV_COORD[1]}
-            VERSION=${GAV_COORD[2]}         
+            VERSION=${GAV_COORD[2]}
             IFS=$OIFS
             ;;
         c)
@@ -180,16 +180,16 @@ if [[ "$REPOSITORY" == "" ]]
 then
     if [[ "$VERSION" =~ "SNAPSHOT" ]]
     then
-	if [[ ${VERBOSE} -ne 0 ]]
-	then
-	    echo "Setting REPO to snapshots"
-	fi
+        if [[ ${VERBOSE} -ne 0 ]]
+        then
+            echo "Setting REPO to snapshots"
+        fi
         : ${REPO:="snapshots"}
     else
-	if [[ ${VERBOSE} -ne 0 ]]
-	then
-	    echo "Setting REPO to releases"
-	fi
+        if [[ ${VERBOSE} -ne 0 ]]
+        then
+            echo "Setting REPO to releases"
+        fi
         : ${REPO:="releases"}
     fi
 fi
@@ -223,7 +223,7 @@ fi
 
 # Output
 OUT=
-if [[ "$OUTPUT" != "" ]] 
+if [[ "$OUTPUT" != "" ]]
 then
     OUT="-o $OUTPUT"
 else
