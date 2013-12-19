@@ -78,17 +78,17 @@ define artifactory::artifact(
   $cmd = "/opt/artifactory-script/download-artifact-from-artifactory.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
 
   if $ensure == present {
-    exec { "Download ${gav}-${classifier}":
+    exec { "Download ${gav}-${classifier} to ${output}":
       command => $cmd,
       unless  => "test -f ${output}"
     }
   } elsif $ensure == absent {
-    file { "Remove ${gav}-${classifier}":
+    file { "Remove ${gav}-${classifier} to ${output}":
       path   => $output,
       ensure => absent
     }
   } else {
-    exec { "Download ${gav}-${classifier}":
+    exec { "Download ${gav}-${classifier} to ${output}":
       command => $cmd,
     }
   }
