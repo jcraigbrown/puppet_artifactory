@@ -79,8 +79,15 @@ function get_timestamp_and_build()
     local __ts=
     local __build=
 
+    # Authentication
+    AUTHENTICATION=
+    if [[ "$USERNAME" != "" ]]  && [[ "$PASSWORD" != "" ]]
+    then
+    AUTHENTICATION="-u $USERNAME:$PASSWORD"
+    fi
+
     # Retrieve the maven-metadata.xml file
-    curl -sS -f -L ${__request_url} -o ${__maven_metadata} ${CURL_VERBOSE} --location-trusted
+    curl -sS -f -L ${__request_url} -o ${__maven_metadata} ${AUTHENTICATION} ${CURL_VERBOSE} --location-trusted
     # Command to extract the timestamp
     __ts=`cat ${__maven_metadata} | tr -d [:space:] | grep -o "<timestamp>.*</timestamp>" \
         | tr '<>' '  ' | awk '{ print $2 }'`
