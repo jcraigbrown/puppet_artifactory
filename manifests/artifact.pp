@@ -55,7 +55,6 @@ define artifactory::artifact(
 
   include artifactory
 
-  Exec { path => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'], }
 
   if ($artifactory::authentication) {
     $args = "-u ${artifactory::user} -p '${artifactory::pwd}'"
@@ -75,7 +74,15 @@ define artifactory::artifact(
     $timestampedRepo = "-t"
   }
 
-  $cmd = "/opt/artifactory-script/download-artifact-from-artifactory.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+  $cmdpart = "${artifactory::installdir}/${artifactory::scriptname} -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+
+  if $::operatingsystem == 'windows' {
+    Exec { path => ['C:/Windows/System32/WindowsPowerShell/v1.0'], }
+    cmd = "powershell -executionpolicy remotesigned -file ${cmdpart}"
+  } else {
+    Exec { path => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'], }
+    cmd = "${cmdpart}"
+  }
 
   if $ensure == present {
     exec { "Download ${gav}-${classifier} to ${output}":

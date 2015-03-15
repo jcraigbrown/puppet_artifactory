@@ -42,16 +42,26 @@ class artifactory(
     $pwd = $password
   }
 
-  # Install script
-  file { '/opt/artifactory-script/download-artifact-from-artifactory.sh':
-    ensure   => file,
-    owner    => 'root',
-    mode     => '0755',
-    source   => 'puppet:///modules/artifactory/download-artifact-from-artifactory.sh',
-    require  => File ['/opt/artifactory-script']
+  if $::operatingsystem == 'windows' {
+    $installdir = 'C:\ProgramData\artifactory-script'
+    $scriptname = 'download-artifact-from-artifactory.ps1'
+
+  } else {
+    $installdir = '/opt/artifactory-script'
+    $scriptname = 'download-artifact-from-artifactory.sh'
   }
 
-  file { '/opt/artifactory-script':
-    ensure => directory
-  }	
+  # Install script
+  file { "${installdir}/${scriptname}":
+    ensure  => file,
+    mode    => '0755',
+    source  => "puppet:///modules/artifactory/${scriptname}",
+    require => File ["${installdir}"]
+  }
+
+
+  file { "${$installdir}":
+    ensure  => directory
+  }
+
 }

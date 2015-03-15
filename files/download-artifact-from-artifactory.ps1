@@ -14,8 +14,7 @@
  
 .PARAMETER -n
         Base URL of artifactory.
-		Note: include '/artifactory' at the end, if artifactory is available under that location. (Earlier versions
-		of the puppet module always appended this. That is no longer the case).
+	Note: include '/artifactory' at the end, if artifactory is available under that location.
  
     
 .NOTES    
@@ -42,7 +41,7 @@ param(
     [string]$repo,
     [string]$username,
     [string]$password,
-	[string]$n_baseurl
+    [string]$n_baseurl
 )
 
 
