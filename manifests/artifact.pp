@@ -77,17 +77,19 @@ define artifactory::artifact(
   $cmdpart = "${artifactory::installdir}/${artifactory::scriptname} -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
 
   if $::operatingsystem == 'windows' {
-    Exec { path => ['C:/Windows/System32/WindowsPowerShell/v1.0'], }
-    cmd = "powershell -executionpolicy remotesigned -file ${cmdpart}"
+    Exec { path => ['C:/Windows/System32', 'C:/Windows/System32/WindowsPowerShell/v1.0'], }
+    $cmd       = "powershell -executionpolicy remotesigned -file ${cmdpart}"
+    $unlesscmd = "cmd /c dir ${output}"
   } else {
     Exec { path => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'], }
-    cmd = "${cmdpart}"
+    $cmd       = "${cmdpart}"
+    $unlesscmd = "test -f ${output}"
   }
 
   if $ensure == present {
     exec { "Download ${gav}-${classifier} to ${output}":
       command => $cmd,
-      unless  => "test -f ${output}"
+      unless  => $unlesscmd
     }
   } elsif $ensure == absent {
     file { "Remove ${gav}-${classifier} to ${output}":

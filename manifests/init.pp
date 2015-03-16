@@ -45,7 +45,7 @@ class artifactory(
   if $::operatingsystem == 'windows' {
     $installdir = 'C:\ProgramData\artifactory-script'
     $scriptname = 'download-artifact-from-artifactory.ps1'
-
+    File { source_permissions => ignore }
   } else {
     $installdir = '/opt/artifactory-script'
     $scriptname = 'download-artifact-from-artifactory.sh'
