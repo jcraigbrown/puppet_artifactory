@@ -1,5 +1,5 @@
 name    'jcraigbrown-artifactory'
-version '0.0.4'
+version '0.0.5'
 source 'https://github.com/jcraigbrown/artifactory.git'
 author 'J. Craig Brown'
 license 'Apache License, Version 2.0'

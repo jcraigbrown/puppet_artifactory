@@ -2,7 +2,7 @@
 
 # Define Artifactory Configuration
 ARTIFACTORY_BASE=
-URL_BASE=/artifactory
+URL_BASE=
 
 usage()
 {
@@ -108,7 +108,7 @@ TIMESTAMPED_SNAPSHOT=0
 
 OUTPUT=
 
-while getopts "hvta:c:e:o:r:u:p:n:" OPTION
+while getopts "hvta:c:e:o:r:u:p:n:b:" OPTION
 do
     case $OPTION in
         h)
@@ -150,6 +150,9 @@ do
             ;;
         n)
             ARTIFACTORY_BASE=$OPTARG
+            ;;
+        b)
+            URL_BASE=$OPTARG
             ;;
         ?)
             echo "Illegal argument $OPTION=$OPTARG" >&2
