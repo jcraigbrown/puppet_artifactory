@@ -4,6 +4,7 @@
 #
 # Parameters:
 # [*url*] : The Artifactory base url (mandatory)
+# [*context*] : Artifactory context, defaults to /artifactory
 # [*username*] : The username used to connect to artifactory
 # [*password*] : The password used to connect to artifactory
 #
@@ -19,6 +20,7 @@
 #
 class artifactory(
   $url = '',
+  $context = '/artifactory',
   $username = '',
   $password = '')
 {
@@ -29,6 +31,7 @@ class artifactory(
     fail('Cannot initialize the Artifactory class - the url parameter is mandatory')
   }
   $ARTIFACTORY_URL = $url
+  $ARTIFACTORY_CONTEXT = $context
 
   if ($username != '') and ($password == '') {
     fail('Cannot initialize the Artifactory class - both username and password must be set')

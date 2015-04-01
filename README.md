@@ -28,6 +28,12 @@ Usage
 	# Initialize the Puppet Artifactory module
 	class {'artifactory':
 	  url => 'http://artifactory.domain.com',
+      context => '/artifactory'
+	}
+	
+    class {'proxied-artifactory':
+	  url => 'http://artifactory.domain.com',
+      context => '/'
 	}
 
 	artifactory::artifact {'commons-io':

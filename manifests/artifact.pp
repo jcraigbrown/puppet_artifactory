@@ -75,7 +75,9 @@ define artifactory::artifact(
     $timestampedRepo = "-t"
   }
 
-  $cmd = "/opt/artifactory-script/download-artifact-from-artifactory.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+  $baseUrl = "-b ${artifactory::ARTIFACTORY_CONTEXT}"
+
+  $cmd = "/opt/artifactory-script/download-artifact-from-artifactory.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${baseUrl} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
 
   if $ensure == present {
     exec { "Download ${gav}-${classifier} to ${output}":
