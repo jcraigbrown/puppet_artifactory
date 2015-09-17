@@ -91,7 +91,7 @@ define artifactory::artifact(
       unless  => "test -f ${output}"
     }
   } elsif $ensure == absent {
-    file { "Remove ${gav}-${classifier} to ${output}":
+    file { $RemovalConsoleOutput :
       path   => $output,
       ensure => absent
     }

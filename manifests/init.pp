@@ -28,7 +28,7 @@ class artifactory(
   if $url == '' {
     fail('Cannot initialize the Artifactory class - the url parameter is mandatory')
   }
-  $artifactory_url = $url
+  $artifactoryUrl = $url
 
   if ($username != '') and ($password == '') {
     fail('Cannot initialize the Artifactory class - both username and password must be set')
