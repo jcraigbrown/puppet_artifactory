@@ -33,7 +33,7 @@ USERNAME=
 PASSWORD=
 OUTPUT=
 
-while getopts "hvtag:c:e:o:r:u:p:n:" OPTION
+while getopts "ha:g:c:e:o:r:u:p:n:" OPTION
 do
     case $OPTION in
         h)
@@ -76,4 +76,6 @@ do
 done
 
 
-sudo wget --user=$USERNAME --password=$PASSWORD -O $OUTPUT $ARTIFACTORY_BASE/artifactory/$REPO/$GROUP_ID/$ARTIFACT_ID/[RELEASE]/$ARTIFACT_ID-[RELEASE]$PACKAGING
+sudo wget --user=${USERNAME} --password=${PASSWORD} -O ${OUTPUT} \
+  ${ARTIFACTORY_BASE}/artifactory/${REPO}/${GROUP_ID}/${ARTIFACT_ID}/[RELEASE]/${ARTIFACT_ID}-[RELEASE]${PACKAGING}
+
