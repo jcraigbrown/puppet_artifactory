@@ -43,15 +43,12 @@ class artifactory(
   }
 
   # Install script
-  file { '/opt/artifactory-script/download-artifact-from-artifactory.sh':
-    ensure   => file,
-    owner    => 'root',
-    mode     => '0755',
-    source   => 'puppet:///modules/artifactory/download-artifact-from-artifactory.sh',
-    require  => File['/opt/artifactory-script']
+  file { '/opt/artifactory-script/':
+    ensure  => file,
+    owner   => 'root',
+    mode    => '0755',
+    source  => 'puppet:///modules/artifactory/',
+    recurse => true,
   }
 
-  file { '/opt/artifactory-script':
-    ensure => directory
-  }	
 }
