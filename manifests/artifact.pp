@@ -45,9 +45,10 @@
 #
 define artifactory::artifact(
   $ensure = update,
-  $gav,
+  $gav = '',
+  $groupid = '',
+  $artifactid = '',
   $packaging = 'jar',
-  $classifier = '',
   $repository = '',
   $output = $name,
   $timestamped = false)
@@ -75,7 +76,11 @@ define artifactory::artifact(
     $timestampedRepo = "-t"
   }
 
-  $cmd = "/opt/artifactory-script/download-artifact-from-artifactory.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::artifactory_url} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+  if ($gav) {
+    $cmd = "/opt/artifactory-script/download-artifact-from-artifactory-via-gav.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::artifactory_url} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+  } else {
+    $cmd = "/opt/artifactory-script/download-latest-artifact-from-artifactory.sh -g ${group_id} -a ${artifactid} -e ${packaging} -n ${artifactory::artifactory_url}${includeRepo} -o ${output} ${args}"
+  }
 
   if $ensure == present {
     exec { "Download ${gav}-${classifier} to ${output}":
