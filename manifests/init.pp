@@ -42,12 +42,12 @@ class artifactory(
     $pwd = $password
   }
 
-  # Install script
+  # Install scripts
   file { '/opt/artifactory-script/':
     ensure  => file,
     owner   => 'root',
     mode    => '0755',
-    source  => 'puppet:///modules/artifactory/',
+    source  => 'puppet:///modules/artifactory/download-scripts',
     recurse => true,
   }
 
