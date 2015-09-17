@@ -76,7 +76,7 @@ define artifactory::artifact(
     $timestampedRepo = "-t"
   }
 
-  if ($gav) {
+  if ($gav != '') {
     $cmd = "/opt/artifactory-script/download-artifact-from-artifactory-via-gav.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::artifactory_url} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
   } else {
     $cmd = "/opt/artifactory-script/download-latest-artifact-from-artifactory.sh -g ${group_id} -a ${artifactid} -e ${packaging} -n ${artifactory::artifactory_url}${includeRepo} -o ${output} ${args}"
