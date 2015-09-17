@@ -78,25 +78,25 @@ define artifactory::artifact(
 
   if ($gav != '') {
     $cmd = "/opt/artifactory-script/download-artifact-from-artifactory-via-gav.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::artifactoryUrl} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
-    $DownloadConsoleOutput = "Download ${gav}-${classifier} to ${output}"
-    $RemovalConsoleOutput = "Remove ${gav}-${classifier} to ${output}"
+    $downloadConsoleOutput = "Download ${gav}-${classifier} to ${output}"
+    $removalConsoleOutput = "Remove ${gav}-${classifier} to ${output}"
   } else {
     $cmd = "/opt/artifactory-script/download-latest-artifact-from-artifactory.sh -g ${groupId} -a ${artifactId} -e ${packaging} -n ${artifactory::artifactoryUrl}${includeRepo} -o ${output} ${args}"
-    $DownloadConsoleOutput = "Download latest${groupId}:${artifactId} to ${output}"
+    $downloadConsoleOutput = "Download latest${groupId}:${artifactId} to ${output}"
   }
 
   if $ensure == present {
-    exec { $DownloadConsoleOutput :
+    exec { $downloadConsoleOutput :
       command => $cmd,
       unless  => "test -f ${output}"
     }
   } elsif $ensure == absent {
-    file { $RemovalConsoleOutput :
+    file { $removalConsoleOutput :
       path   => $output,
       ensure => absent
     }
   } else {
-    exec { $DownloadConsoleOutput :
+    exec { $downloadConsoleOutput :
       command => $cmd,
     }
   }
