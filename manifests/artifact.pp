@@ -46,8 +46,8 @@
 define artifactory::artifact(
   $ensure = update,
   $gav = '',
-  $groupid = '',
-  $artifactid = '',
+  $groupId = '',
+  $artifactId = '',
   $packaging = 'jar',
   $repository = '',
   $output = $name,
@@ -77,13 +77,16 @@ define artifactory::artifact(
   }
 
   if ($gav != '') {
-    $cmd = "/opt/artifactory-script/download-artifact-from-artifactory-via-gav.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::artifactory_url} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+    $cmd = "/opt/artifactory-script/download-artifact-from-artifactory-via-gav.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::artifactoryUrl} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+    $DownloadConsoleOutput = "Download ${gav}-${classifier} to ${output}"
+    $RemovalConsoleOutput = "Remove ${gav}-${classifier} to ${output}"
   } else {
-    $cmd = "/opt/artifactory-script/download-latest-artifact-from-artifactory.sh -g ${group_id} -a ${artifactid} -e ${packaging} -n ${artifactory::artifactory_url}${includeRepo} -o ${output} ${args}"
+    $cmd = "/opt/artifactory-script/download-latest-artifact-from-artifactory.sh -g ${groupId} -a ${artifactId} -e ${packaging} -n ${artifactory::artifactoryUrl}${includeRepo} -o ${output} ${args}"
+    $DownloadConsoleOutput = "Download latest${groupId}:${artifactId} to ${output}"
   }
 
   if $ensure == present {
-    exec { "Download ${gav}-${classifier} to ${output}":
+    exec { $DownloadConsoleOutput :
       command => $cmd,
       unless  => "test -f ${output}"
     }
@@ -93,7 +96,7 @@ define artifactory::artifact(
       ensure => absent
     }
   } else {
-    exec { "Download ${gav}-${classifier} to ${output}":
+    exec { $DownloadConsoleOutput :
       command => $cmd,
     }
   }
