@@ -81,7 +81,7 @@ define artifactory::artifact(
     $downloadConsoleOutput = "Download ${gav}-${classifier} to ${output}"
     $removalConsoleOutput = "Remove ${gav}-${classifier} to ${output}"
   } else {
-    $cmd = "/opt/artifactory-script/download-latest-artifact-from-artifactory.sh -g ${groupId} -a ${artifactId} -e ${packaging} -n ${artifactory::artifactoryUrl}${includeRepo} -o ${output} ${args}"
+    $cmd = "/opt/artifactory-script/download-latest-artifact-from-artifactory.sh -g ${groupId} -a ${artifactId} -e ${packaging} -n ${artifactory::artifactoryUrl} ${includeRepo} -o ${output} ${args}"
     $downloadConsoleOutput = "Download latest${groupId}:${artifactId} to ${output}"
   }
 
@@ -101,3 +101,4 @@ define artifactory::artifact(
     }
   }
 }
+
