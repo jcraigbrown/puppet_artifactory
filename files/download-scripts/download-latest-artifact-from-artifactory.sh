@@ -50,7 +50,7 @@ do
             CLASSIFIER=$OPTARG
             ;;
         e)
-            PACKAGING=$OPTARG
+            PACKAGING=.$OPTARG
             ;;
         o)
             OUTPUT=$OPTARG
@@ -77,5 +77,5 @@ done
 
 
 sudo wget --user=${USERNAME} --password=${PASSWORD} -O ${OUTPUT} \
-  ${ARTIFACTORY_BASE}/artifactory/${REPO}/${GROUP_ID}/${ARTIFACT_ID}/[RELEASE]/${ARTIFACT_ID}-[RELEASE]${PACKAGING}
+  ${ARTIFACTORY_BASE}/artifactory/${REPO}/${GROUP_ID}/${ARTIFACT_ID}/[RELEASE]/${ARTIFACT_ID}-[RELEASE].${PACKAGING}
 
