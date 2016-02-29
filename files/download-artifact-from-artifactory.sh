@@ -2,7 +2,7 @@
 
 # Define Artifactory Configuration
 ARTIFACTORY_BASE=
-URL_BASE=/artifactory
+URL_BASE=
 
 usage()
 {
