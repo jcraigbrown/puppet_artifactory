@@ -44,21 +44,30 @@ class artifactory(
 
   if $::operatingsystem == 'windows' {
     $installdir = 'C:\ProgramData\artifactory-script'
-    $scriptname = 'download-artifact-from-artifactory.ps1'
+    $downloadscript = 'download-artifact-from-artifactory.ps1'
+    $comparescript  = 'compare-artifact-checksums.ps1'
     File { source_permissions => ignore }
   } else {
     $installdir = '/opt/artifactory-script'
-    $scriptname = 'download-artifact-from-artifactory.sh'
+    $downloadscript = 'download-artifact-from-artifactory.sh'
+    $comparescript  = 'compare-artifact-checksums.sh'
   }
 
-  # Install script
-  file { "${installdir}/${scriptname}":
+  # Install download script
+  file { "${installdir}/${downloadscript}":
     ensure  => file,
     mode    => '0755',
-    source  => "puppet:///modules/artifactory/${scriptname}",
+    source  => "puppet:///modules/artifactory/${downloadscript}",
     require => File ["${installdir}"]
   }
 
+  # Install compare script
+  file { "${installdir}/${comparescript}":
+    ensure  => file,
+    mode    => '0755',
+    source  => "puppet:///modules/artifactory/${comparescript}",
+    require => File ["${installdir}"]
+  }
 
   file { "${$installdir}":
     ensure  => directory
