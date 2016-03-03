@@ -4,9 +4,10 @@ Puppet Module for Artifactory
 A Puppet module which downloads artifacts from an Artifactory repository.
 
 It supports:
+
 * artifact identification using GAV, classifier, and packaging
 * repository selection
-* timestamped SNAPSHOTs
+* timestamped SNAPSHOTs (not on Windows)
 
 It relies on the Artifactory REST service, bash, and curl.
 
@@ -25,10 +26,16 @@ Getting the Module
 Usage
 -----
 
-	# Initialize the Puppet Artifactory module
+Initialize the Puppet Artifactory module and specify the URL of your artifactory
+system. Note that previous versions of this module automatically appended
+'/artifactory' to this URL. This is no longer the case, so make sure the
+specified URL includes '/artifactory', if required.
+
 	class {'artifactory':
 	  url => 'http://artifactory.domain.com',
 	}
+
+Examples of downloading artifacts:
 
 	artifactory::artifact {'commons-io':
 	  gav        => 'commons-io:commons-io:2.1',

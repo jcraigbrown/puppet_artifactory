@@ -42,16 +42,35 @@ class artifactory(
     $pwd = $password
   }
 
-  # Install script
-  file { '/opt/artifactory-script/download-artifact-from-artifactory.sh':
-    ensure   => file,
-    owner    => 'root',
-    mode     => '0755',
-    source   => 'puppet:///modules/artifactory/download-artifact-from-artifactory.sh',
-    require  => File ['/opt/artifactory-script']
+  if $::operatingsystem == 'windows' {
+    $installdir = 'C:\ProgramData\artifactory-script'
+    $downloadscript = 'download-artifact-from-artifactory.ps1'
+    $comparescript  = 'compare-artifact-checksums.ps1'
+    File { source_permissions => ignore }
+  } else {
+    $installdir = '/opt/artifactory-script'
+    $downloadscript = 'download-artifact-from-artifactory.sh'
+    $comparescript  = 'compare-artifact-checksums.sh'
   }
 
-  file { '/opt/artifactory-script':
-    ensure => directory
-  }	
+  # Install download script
+  file { "${installdir}/${downloadscript}":
+    ensure  => file,
+    mode    => '0755',
+    source  => "puppet:///modules/artifactory/${downloadscript}",
+    require => File ["${installdir}"]
+  }
+
+  # Install compare script
+  file { "${installdir}/${comparescript}":
+    ensure  => file,
+    mode    => '0755',
+    source  => "puppet:///modules/artifactory/${comparescript}",
+    require => File ["${installdir}"]
+  }
+
+  file { "${$installdir}":
+    ensure  => directory
+  }
+
 }

@@ -55,7 +55,6 @@ define artifactory::artifact(
 
   include artifactory
 
-  Exec { path => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'], }
 
   if ($artifactory::authentication) {
     $args = "-u ${artifactory::user} -p '${artifactory::pwd}'"
@@ -75,12 +74,30 @@ define artifactory::artifact(
     $timestampedRepo = "-t"
   }
 
-  $cmd = "/opt/artifactory-script/download-artifact-from-artifactory.sh -a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+  $cmdargs = "-a ${gav} -e ${packaging} ${includeClass} -n ${artifactory::ARTIFACTORY_URL} ${includeRepo} ${timestampedRepo} -o ${output} ${args} -v"
+
+  if $::operatingsystem == 'windows' {
+    Exec { path => ['C:/Windows/System32', 'C:/Windows/System32/WindowsPowerShell/v1.0'], }
+    $downloadcmd = "${artifactory::installdir}\\${artifactory::downloadscript} ${cmdargs}"
+    $comparecmd  = "${artifactory::installdir}\\${artifactory::comparescript}  ${cmdargs}"
+    $cmd         = "powershell -executionpolicy remotesigned -file ${downloadcmd}"
+    $unlesscmd   = "powershell -executionpolicy remotesigned -file ${comparecmd}"
+  } else {
+    Exec { path => ['/bin', '/sbin', '/usr/bin', '/usr/sbin'], }
+    $downloadcmd = "${artifactory::installdir}/${artifactory::downloadscript} ${cmdargs}"
+    $comparecmd  = "${artifactory::installdir}/${artifactory::comparescript}  ${cmdargs}"
+    $cmd         = "${downloadcmd}"
+    $unlesscmd   = "${comparecmd}"
+  }
 
   if $ensure == present {
     exec { "Download ${gav}-${classifier} to ${output}":
       command => $cmd,
-      unless  => "test -f ${output}"
+      unless  => $unlesscmd,
+      require => File [
+          "${artifactory::installdir}/${artifactory::comparescript}",
+          "${artifactory::installdir}/${artifactory::downloadscript}"
+      ],
     }
   } elsif $ensure == absent {
     file { "Remove ${gav}-${classifier} to ${output}":
@@ -90,6 +107,7 @@ define artifactory::artifact(
   } else {
     exec { "Download ${gav}-${classifier} to ${output}":
       command => $cmd,
+      require => File [ "${artifactory::installdir}/${artifactory::downloadscript}" ],
     }
   }
 }

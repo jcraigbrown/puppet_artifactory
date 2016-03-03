@@ -10,7 +10,8 @@ usage()
 
 usage: $0 options
 
-This script will fetch an artifact from a Artifactory server using the Artifactory REST redirect service.
+This script will check if the desired artifact file
+exists locally and has the same checksum as in Artifactory. 
 
 OPTIONS:
    -h    Show this message
@@ -121,7 +122,7 @@ do
             GAV_COORD=( $OPTARG )
             GROUP_ID=`echo ${GAV_COORD[0]} | tr . /`
             ARTIFACT_ID=${GAV_COORD[1]}
-            VERSION=${GAV_COORD[2]}
+            VERSION=${GAV_COORD[2]}         
             IFS=$OIFS
             ;;
         c)
@@ -195,24 +196,25 @@ then
 fi
 
 # Construct the base URL
-ARTIFACT_BASE_URL=${ARTIFACTORY_BASE}${URL_BASE}/${REPO}/${GROUP_ID}/${ARTIFACT_ID}/${VERSION}
+ARTIFACT_API_BASE_URL=${ARTIFACTORY_BASE}${URL_BASE}/api/storage/${REPO}/${GROUP_ID}/${ARTIFACT_ID}/${VERSION}
 ARTIFACT_TARGET_NAME=$( artifact_target_name ${ARTIFACT_ID} ${VERSION} ${PACKAGING} ${CLASSIFIER} )
 
 if [[ "${VERSION}" =~ "SNAPSHOT" ]] && [[ ${TIMESTAMPED_SNAPSHOT} -ne 0 ]]
 then
-    ARTIFACT_SOURCE_NAME=$( artifact_source_name ${ARTIFACT_BASE_URL} ${ARTIFACT_ID} ${VERSION} ${PACKAGING} ${CLASSIFIER} )
+    ARTIFACT_SOURCE_NAME=$( artifact_source_name ${ARTIFACT_API_BASE_URL} ${ARTIFACT_ID} ${VERSION} ${PACKAGING} ${CLASSIFIER} )
 else
     ARTIFACT_SOURCE_NAME=${ARTIFACT_TARGET_NAME}
 fi
 
 if [[ ${VERBOSE} -ne 0 ]]
 then
-    echo "Base URL: ${ARTIFACT_BASE_URL}"
+    echo "Base URL: ${ARTIFACT_API_BASE_URL}"
     echo "Artifact Target: ${ARTIFACT_TARGET_NAME}"
     echo "Artifact Source: ${ARTIFACT_SOURCE_NAME}"
 fi
 
-REQUEST_URL="${ARTIFACT_BASE_URL}/${ARTIFACT_SOURCE_NAME}"
+REQUEST_URL="${ARTIFACT_API_BASE_URL}/${ARTIFACT_SOURCE_NAME}"
+FILEINFO_REQUEST_URL="${ARTIFACT_API_BASE_URL}/${ARTIFACT_SOURCE_NAME}"
 
 # Authentication
 AUTHENTICATION=
@@ -222,13 +224,36 @@ then
 fi
 
 # Output
-OUT=
-if [[ "$OUTPUT" != "" ]]
+LOCALFILE=
+if [[ "$OUTPUT" != "" ]] 
 then
-    OUT="-o $OUTPUT"
+    LOCALFILE="$OUTPUT"
 else
-    OUT="-o ${ARTIFACT_TARGET_NAME}"
+    LOCALFILE="${ARTIFACT_TARGET_NAME}"
 fi
 
-echo "Fetching Artifact from $REQUEST_URL..." >&2
-curl -sS -f -L ${REQUEST_URL} ${OUT} ${AUTHENTICATION} ${CURL_VERBOSE} --location-trusted
+# If the local file does not exist, there's no check to do so exit now
+if [[ ! -f $LOCALFILE ]]
+then
+  echo "File $LOCALFILE does not exist" >&2
+  exit 1
+fi
+ 
+echo "Fetching Artifact file info from $FILEINFO_REQUEST_URL..." >&2
+FILEINFO=$(curl -sS -f -L ${FILEINFO_REQUEST_URL} ${AUTHENTICATION} ${CURL_VERBOSE} --location-trusted)
+
+MD5_CHECKSUM_REPO=$(echo $FILEINFO | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["checksums"]["md5"]')
+MD5_CHECKSUM_FILE=$(md5sum $LOCALFILE | awk '{print $1}')
+
+echo "Comparing checksums:"
+echo "From repo: $MD5_CHECKSUM_REPO"
+echo "From file: $MD5_CHECKSUM_FILE"
+
+if [[ "$MD5_CHECKSUM_REPO" == "$MD5_CHECKSUM_FILE" ]]
+then
+  echo "Checksums from repository and local file are identical" >&2
+  exit 0
+else
+  echo "Checksum from repository: ""$MD5_CHECKSUM_REPO"" differ from checksum of local file: ""$MD5_CHECKSUM_FILE""" >&2
+  exit 1
+fi
